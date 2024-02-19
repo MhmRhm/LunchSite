@@ -62,7 +62,7 @@ def cancel_meal(request, menu_id, meal_id):
     return index(request)
 
 
-@staff_member_required
+@login_required
 def report_menu(request, menu_id):
     meals = Meal.objects.all()
 
@@ -72,11 +72,17 @@ def report_menu(request, menu_id):
             orders = MenuSelection.objects.filter(menu=menu).all()
             for order in orders:
                 if not order.is_paid_for:
-                    employees = order.employee
-                    employees.credit -= order.selected_meal.price
-                    order.is_paid_for = True
-                    employees.save()
-                    order.save()
+                    count = MenuSelection.objects.filter(
+                        menu_id=menu_id, selected_meal=order.selected_meal
+                    ).count()
+                    employee = order.employee
+                    if count >= 10:
+                        employee.credit -= order.selected_meal.price
+                        order.is_paid_for = True
+                        employee.save()
+                        order.save()
+                    else:
+                        order.delete()
             menu.is_paid_for = True
             menu.save()
 
