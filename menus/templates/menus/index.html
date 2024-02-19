@@ -4,8 +4,11 @@
 <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.css">
 <style>
   form {
-    margin: 0 auto;
-    max-width: 300px;
+    margin: 0;
+  }
+
+  .form-container {
+    text-align: left;
   }
 
   .center {
@@ -14,10 +17,15 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  th,
+  td {
+    vertical-align: middle;
+  }
 </style>
 {% endblock %}
 
-{% block content %}ßß
+{% block content %}
 
 <body>
   <div class="center">
@@ -62,28 +70,21 @@
           <td scope="col"></td>
           <td scope="col" class="text-body">RM {{ credit }}</td>
           <td scope="col">
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Log Out</button>
-            </form>
-          </td>
-        </tr>
-        {% if request.user.is_staff %}
-        <tr class="table-active">
-          <td scope="col"></td>
-          <td scope="col"></td>
-          <td scope="col"></td>
-          <td scope="col">
             <form action="{% url 'report_menu' menu.id %}" method="post">
               {% csrf_token %}
               <button type="submit" class="btn btn-warning">Report</button>
             </form>
           </td>
         </tr>
-        {% endif %}
       </tbody>
     </table>
     <p class="text-light">Expires at: {{menu.expire_at}}</p>
+    <div class="form-container">
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Log Out</button>
+      </form>
+    </div>
   </div>
 </body>
 {% endblock %}
