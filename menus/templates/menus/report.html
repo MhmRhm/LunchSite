@@ -1,0 +1,49 @@
+{% load crispy_forms_tags %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.css">
+<style>
+    form {
+        margin: 0 auto;
+        max-width: 300px;
+    }
+
+    .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        /* Three columns */
+        gap: 20px;
+        /* Gap between grid items */
+    }
+
+    .grid-item {
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+<body>
+    <div class="center">
+        <div class="grid-container">
+            {% for report in meals_report %}
+            <div class="grid-item">
+                <div class="card border-success mb-3" style="max-width: 20rem;">
+                    <div class="card-header">{{report.meal.name}}</div>
+                    <div class="card-body">
+                        <h4 class="card-title">{{report.count}}</h4>
+                        <p class="card-text">{{report.employees}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
