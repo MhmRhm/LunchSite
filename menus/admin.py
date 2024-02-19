@@ -6,6 +6,7 @@ class MealInline(admin.TabularInline):
     extra = 1
 
 class MenuAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description', 'get_meals']
     fieldsets = [
         (None, {'fields': ['name', 'description']}),
         ("Date information", {"fields": ["expire_at"]}),
@@ -18,14 +19,13 @@ class MealAdmin(admin.ModelAdmin):
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'email', 'phone_number', 'credit']
-    search_fields = ['name', 'email']
+    list_display = ['get_full_name', 'credit']
 
 @admin.register(MenuSelection)
 class MenuSelectionAdmin(admin.ModelAdmin):
     list_display = ['employee', 'menu', 'selected_meal', 'date']
     list_filter = ['employee', 'menu', 'date']
-    search_fields = ['employee__name', 'menu__name', 'selected_meal__name']
+    search_fields = ['employee__get_full_name', 'menu__name', 'selected_meal__name']
     date_hierarchy = 'date'
 
 admin.site.register(Menu, MenuAdmin)

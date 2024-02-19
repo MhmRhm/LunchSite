@@ -1,20 +1,26 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 
 class Employee(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone_number = models.CharField(max_length=20)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def get_full_name(self):
+        return self.user.get_full_name()
+    
     def __str__(self):
-        return self.name
+        return self.get_full_name()
 
 class Menu(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     expire_at = models.DateTimeField()
     meals = models.ManyToManyField('Meal', related_name='menus')
+
+    def get_meals(self):
+        names = [meal.name for meal in self.meals.iterator()]
+        return ', '.join(names)
 
     def __str__(self):
         return self.name
@@ -34,4 +40,4 @@ class MenuSelection(models.Model):
     date = models.DateField(default=datetime.now)
 
     def __str__(self):
-        return f"{self.employee.name}'s Selection for {self.menu.name}"
+        return f"{self.employee.user.get_full_name()}'s Selection for {self.menu.name}"

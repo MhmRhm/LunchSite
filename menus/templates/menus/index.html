@@ -1,0 +1,19 @@
+<!-- templates/home.html-->
+{% load crispy_forms_tags %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.css">
+<style>
+    form {
+        margin: 0 auto;
+        max-width: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form action="{% url 'logout' %}" method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-success">Log Out</button>
+</form>
+{% endblock %}
