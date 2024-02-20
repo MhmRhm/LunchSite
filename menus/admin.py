@@ -10,7 +10,7 @@ class MealInline(admin.TabularInline):
 class MenuAdmin(admin.ModelAdmin):
     list_display = ["name", "description", "get_meals"]
     fieldsets = [
-        (None, {"fields": ["name", "description"]}),
+        (None, {"fields": ["name", "description", "employee_limit"]}),
         ("Date information", {"fields": ["expire_at"]}),
     ]
     inlines = [MealInline]
