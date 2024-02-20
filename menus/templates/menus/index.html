@@ -66,9 +66,9 @@
         </tr>
         {% endfor %}
         <tr class="table-active">
-          <td scope="col" class="text-body">Credit</td>
+          <td scope="col" class="text-body">Balance</td>
           <td scope="col"></td>
-          <td scope="col" class="text-body">RM {{ credit }}</td>
+          <td scope="col" class="text-body">RM {{ balance }}</td>
           <td scope="col">
             <form action="{% url 'report_menu' menu.id %}" method="post">
               {% csrf_token %}

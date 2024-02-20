@@ -23,7 +23,7 @@ class MealAdmin(admin.ModelAdmin):
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ["get_full_name", "credit"]
+    list_display = ["get_full_name", "balance"]
 
 
 @admin.register(MenuSelection)

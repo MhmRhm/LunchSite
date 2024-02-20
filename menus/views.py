@@ -26,7 +26,7 @@ def index(request):
         {
             "menu_items": menu_items,
             "menu": menu,
-            "credit": employee.credit,
+            "balance": employee.balance,
             "is_expired": menu.expire_at < timezone.now(),
         },
     )
@@ -76,8 +76,8 @@ def report_menu(request, menu_id):
                         menu_id=menu_id, selected_meal=order.selected_meal
                     ).count()
                     employee = order.employee
-                    if count >= 10:
-                        employee.credit -= order.selected_meal.price
+                    if count >= menu.employee_limit:
+                        employee.balance -= order.selected_meal.price
                         order.is_paid_for = True
                         employee.save()
                         order.save()

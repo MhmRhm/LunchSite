@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def get_full_name(self):
         return self.user.get_full_name()
@@ -20,6 +20,7 @@ class Menu(models.Model):
     expire_at = models.DateTimeField()
     meals = models.ManyToManyField("Meal", related_name="menus")
     is_paid_for = models.BooleanField(default=False)
+    employee_limit = models.IntegerField(default=10)
 
     def get_meals(self):
         names = [meal.name for meal in self.meals.all()]
