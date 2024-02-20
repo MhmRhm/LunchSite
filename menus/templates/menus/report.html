@@ -41,6 +41,7 @@
         </div>
         <div class="grid-container">
             {% for report in meals_report %}
+            {% if report.count %}
             <div class="grid-item">
                 <div class="card border-success mb-3" style="max-width: 20rem;">
                     <div class="card-header">{{report.meal.name}}</div>
@@ -50,6 +51,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
             {% endfor %}
         </div>
     </div>
