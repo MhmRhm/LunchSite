@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/darkly/bootstrap.css">
 <style>
     form {
-        margin: 0 20 auto;
+        margin: 0 10 auto;
     }
 
     .form-container {
@@ -18,15 +18,27 @@
         transform: translate(-50%, -50%);
     }
 
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
 
-    .grid-item {
-        padding: 20px;
+    li {
+        float: left;
+        margin-right: 10px;
+    }
+
+    li:last-child {
+        margin-right: 0;
+    }
+
+    li a {
+        display: block;
         text-align: center;
+        padding: 10px;
+        text-decoration: none;
     }
 </style>
 {% endblock %}
@@ -39,20 +51,24 @@
                 <button type="submit" class="btn btn-success">Back</button>
             </form>
         </div>
-        <div class="grid-container">
+        <ul>
             {% for report in meals_report %}
             {% if report.count %}
-            <div class="grid-item">
-                <div class="card border-success mb-3" style="max-width: 20rem;">
-                    <div class="card-header">{{report.meal.name}}</div>
-                    <div class="card-body">
-                        <h4 class="card-title">{{report.count}}</h4>
-                        <p class="card-text">{{report.employees}}</p>
+            <li><a href="#">
+                    <div class="card border-success mb-3" style="max-width: 20rem;">
+                        <div class="card-header">{{report.meal.name}}</div>
+                        <div class="card-body">
+                            <h4 class="card-title">{{report.count}}</h4>
+                            <p class="card-text">
+                                {% for employee in report.employees %}
+                                {{employee}} <br>
+                                {% endfor %}
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </a></li>
             {% endif %}
             {% endfor %}
-        </div>
+        </ul>
     </div>
 </body>

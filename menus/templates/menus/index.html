@@ -21,6 +21,7 @@
   th,
   td {
     vertical-align: middle;
+    text-align: center
   }
 </style>
 {% endblock %}
@@ -29,57 +30,67 @@
 
 <body>
   <div class="center">
-    <h1>{{ menu.name }}</h1>
-    <p class="text-light">{{menu.description}} <br> {{user.first_name}} {{user.last_name}} </p>
-    <table class="table table-hover">
-      <thead>
-        <tr class="table-primary">
-          <th scope="col">Meal</th>
-          <th scope="col">Description</th>
-          <th scope="col">Price</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in menu_items %}
-        <tr class="table-secondary">
-          <th scope="row">{{ item.meal.name }}</th>
-          <td>{{ item.meal.description }}</td>
-          <td>RM {{ item.meal.price }}</td>
-          <td>
-            {% if is_expired %}
-            Expired
-            {% else %}
-            {% if item.can_order %}
-            <form action="{% url 'order_meal' menu.id item.meal.id %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">Order</button>
-            </form>
-            {% else %}
-            <form action="{% url 'cancel_meal' menu.id item.meal.id %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Cancel</button>
-            </form>
-            {% endif %}
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-        <tr class="table-active">
-          <td scope="col" class="text-body">Balance</td>
-          <td scope="col"></td>
-          <td scope="col" class="text-body">RM {{ balance }}</td>
-          <td scope="col">
-            <form action="{% url 'report_menu' menu.id %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-warning">Report</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="text-light">Expires at: {{menu.expire_at}}</p>
+    <div style="display: flex;">
+      {% for recent in recents %}
+      <div>
+        <h1>{{ recent.menu.name }}</h1>
+        <p class="text-light">{{recent.menu.description}} <br> {{user.first_name}} {{user.last_name}} </p>
+        <table class="table table-hover">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">Meal</th>
+              <th scope="col">Description</th>
+              <th scope="col">Price</th>
+              <th scope="col">Requested</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in recent.menu_items %}
+            <tr class="table-secondary">
+              <th scope="row">{{ item.meal.name }}</th>
+              <td>{{ item.meal.description }}</td>
+              <td>RM {{ item.meal.price }}</td>
+              <td>{{ item.count }}</td>
+              <td>
+                {% if recent.is_expired %}
+                Expired
+                {% else %}
+                {% if item.can_order %}
+                <form action="{% url 'order_meal' recent.menu.id item.meal.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Order</button>
+                </form>
+                {% else %}
+                <form action="{% url 'cancel_meal' recent.menu.id item.meal.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Cancel</button>
+                </form>
+                {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+            <tr class="table-active">
+              <td scope="col"></td>
+              <td scope="col"></td>
+              <td scope="col"></td>
+              <td scope="col"></td>
+              <td scope="col">
+                <form action="{% url 'report_menu' recent.menu.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-warning">Report</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-light">Expires at: {{recent.menu.expire_at}}</p>
+      </div>
+      {% endfor %}
+    </div>
     <div class="form-container">
+      <p class="text-light">Balance: RM {{ balance }}</p>
       <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Log Out</button>

@@ -8,26 +8,37 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 @login_required
 def index(request):
-    menu = Menu.objects.last()
-    meals = menu.meals.all()
+    latest_menus = []
     user = request.user
     employee = Employee.objects.get(user=user)
+    menus = Menu.objects.order_by("-expire_at")[:2].all()
+    for menu in menus:
+        meals = menu.meals.all()
+        menu_items = []
+        for meal in meals:
+            can_order = (
+                MenuSelection.objects.filter(
+                    employee=employee, menu=menu, selected_meal=meal
+                ).count()
+                == 0
+            )
+            count = MenuSelection.objects.filter(menu=menu, selected_meal=meal).count()
+            menu_items.append({"meal": meal, "count": count, "can_order": can_order})
 
-    menu_items = []
-    for meal in meals:
-        previous_order = MenuSelection.objects.filter(
-            employee=employee, menu=menu, selected_meal=meal
+        latest_menus.append(
+            {
+                "menu_items": menu_items,
+                "menu": menu,
+                "is_expired": menu.expire_at < timezone.now(),
+            }
         )
-        menu_items.append({"meal": meal, "can_order": previous_order.count() == 0})
 
     return render(
         request,
         "menus/index.html",
         {
-            "menu_items": menu_items,
-            "menu": menu,
+            "recents": latest_menus,
             "balance": employee.balance,
-            "is_expired": menu.expire_at < timezone.now(),
         },
     )
 
@@ -97,7 +108,7 @@ def report_menu(request, menu_id):
             {
                 "meal": meal,
                 "count": len(employees),
-                "employees": ", ".join(employees),
+                "employees": employees,
             }
         )
     return render(request, "menus/report.html", {"meals_report": meals_report})
