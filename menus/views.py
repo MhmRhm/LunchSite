@@ -50,6 +50,13 @@ def order_meal(request, menu_id, meal_id):
     user = request.user
     employee = Employee.objects.get(user=user)
 
+    spendings = 0
+    orders = MenuSelection.objects.filter(employee=employee, menu=menu).all()
+    for order in orders:
+        spendings += order.selected_meal.price
+    if employee.balance < (spendings + meal.price):
+        return index(request)
+
     if menu.expire_at > timezone.now():
         order = MenuSelection(employee=employee, menu=menu, selected_meal=meal)
         order.save()
