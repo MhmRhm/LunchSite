@@ -36,12 +36,36 @@ class MenuSelectionAdmin(admin.ModelAdmin):
 
 @admin.register(DeliveryPayment)
 class DeliveryPaymentAdmin(admin.ModelAdmin):
+    change_list_template = "admin/custom_change_list.html"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        debt = 0
+        for payment in DeliveryPayment.objects.all():
+            debt += payment.debt
+
+        response.context_data["debt"] = debt
+        return response
+
     list_display = ["menu", "date", "debt"]
     list_filter = ["menu", "date"]
 
 
 @admin.register(ChefPayment)
 class ChefPaymentAdmin(admin.ModelAdmin):
+    change_list_template = "admin/custom_change_list.html"
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        debt = 0
+        for payment in ChefPayment.objects.all():
+            debt += payment.debt
+
+        response.context_data["debt"] = debt
+        return response
+
     list_display = ["menu", "date", "debt"]
     list_filter = ["menu", "date"]
 

@@ -58,7 +58,7 @@ class MenuSelection(models.Model):
 
 
 class DeliveryPayment(models.Model):
-    menu = models.OneToOneField(Menu, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     debt = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     note = models.TextField(blank=True)
@@ -68,7 +68,7 @@ class DeliveryPayment(models.Model):
 
 
 class ChefPayment(models.Model):
-    menu = models.OneToOneField(Menu, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     debt = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     note = models.TextField(blank=True)
