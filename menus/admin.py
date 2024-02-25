@@ -41,11 +41,15 @@ class DeliveryPaymentAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context=extra_context)
 
-        debt = 0
-        for payment in DeliveryPayment.objects.all():
-            debt += payment.debt
+        try:
+            response.context_data["debt"] = 0
+            debt = 0
+            for payment in DeliveryPayment.objects.all():
+                debt += payment.debt
+            response.context_data["debt"] = debt
+        except:
+            pass
 
-        response.context_data["debt"] = debt
         return response
 
     list_display = ["menu", "date", "debt"]
@@ -59,11 +63,15 @@ class ChefPaymentAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context=extra_context)
 
-        debt = 0
-        for payment in ChefPayment.objects.all():
-            debt += payment.debt
-
-        response.context_data["debt"] = debt
+        try:
+            response.context_data["debt"] = 0
+            debt = 0
+            for payment in ChefPayment.objects.all():
+                debt += payment.debt
+            response.context_data["debt"] = debt
+        except:
+            pass
+        
         return response
 
     list_display = ["menu", "date", "debt"]
