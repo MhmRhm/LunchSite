@@ -1,20 +1,26 @@
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse, HttpRequest
-from .models import Menu, Employee, MenuSelection, Meal
+from .models import Menu, Employee, MenuSelection, Meal, DeliveryPayment, ChefPayment
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 
 @login_required
 def index(request):
+    processMenus(request)
+
     latest_menus = []
+
     user = request.user
     employee = Employee.objects.get(user=user)
-    menus = Menu.objects.order_by("-expire_at")[:2].all()
+
+    menus = Menu.objects.order_by("-expire_at")[:1].all()
+
     for menu in menus:
         meals = menu.meals.all()
         menu_items = []
+
         for meal in meals:
             can_order = (
                 MenuSelection.objects.filter(
@@ -53,8 +59,8 @@ def order_meal(request, menu_id, meal_id):
     spendings = 0
     orders = MenuSelection.objects.filter(employee=employee, menu=menu).all()
     for order in orders:
-        spendings += order.selected_meal.price
-    if employee.balance < (spendings + meal.price):
+        spendings += order.selected_meal.cost()
+    if employee.balance < (spendings + meal.cost()):
         return index(request)
 
     if menu.expire_at > timezone.now():
@@ -82,28 +88,8 @@ def cancel_meal(request, menu_id, meal_id):
 
 @login_required
 def report_menu(request, menu_id):
+    processMenus(request)
     meals = Meal.objects.all()
-
-    menus = Menu.objects.filter(is_paid_for=False)
-    for menu in menus:
-        if menu.expire_at < timezone.now():
-            orders = MenuSelection.objects.filter(menu=menu).all()
-            for order in orders:
-                if not order.is_paid_for:
-                    count = MenuSelection.objects.filter(
-                        menu_id=menu_id, selected_meal=order.selected_meal
-                    ).count()
-                    employee = order.employee
-                    if count >= menu.employee_limit:
-                        employee.balance -= order.selected_meal.price
-                        order.is_paid_for = True
-                        employee.save()
-                        order.save()
-                    else:
-                        order.delete()
-            menu.is_paid_for = True
-            menu.save()
-
     menu = Menu.objects.get(id=menu_id)
     meals_report = []
     for meal in meals:
@@ -119,3 +105,45 @@ def report_menu(request, menu_id):
             }
         )
     return render(request, "menus/report.html", {"meals_report": meals_report})
+
+
+def processMenus(request):
+    menus = Menu.objects.filter(is_paid_for=False)
+    for menu in menus:
+        if menu.expire_at < timezone.now():
+            delivery_share = 0
+            chef_share = 0
+
+            orders = MenuSelection.objects.filter(menu=menu).all()
+
+            for order in orders:
+                if not order.is_paid_for:
+                    count = MenuSelection.objects.filter(
+                        menu=menu, selected_meal=order.selected_meal
+                    ).count()
+
+                    employee = order.employee
+                    if count >= menu.employee_limit:
+                        employee.balance -= order.selected_meal.price
+                        chef_share += order.selected_meal.price
+                        employee.balance -= order.selected_meal.delivery_share
+                        delivery_share += order.selected_meal.delivery_share
+
+                        order.is_paid_for = True
+
+                        employee.save()
+                        order.save()
+                    else:
+                        order.delete()
+
+            menu.is_paid_for = True
+            menu.save()
+
+            if delivery_share:
+                payment = DeliveryPayment(
+                    menu=menu, date=menu.expire_at, debt=delivery_share
+                )
+                payment.save()
+            if chef_share:
+                payment = ChefPayment(menu=menu, date=menu.expire_at, debt=chef_share)
+                payment.save()

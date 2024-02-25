@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Menu, Meal, Employee, MenuSelection
+from .models import Menu, Meal, Employee, MenuSelection, DeliveryPayment, ChefPayment
 
 
 class MealInline(admin.TabularInline):
@@ -32,6 +32,18 @@ class MenuSelectionAdmin(admin.ModelAdmin):
     list_filter = ["employee", "menu", "date"]
     search_fields = ["employee__get_full_name", "menu__name", "selected_meal__name"]
     date_hierarchy = "date"
+
+
+@admin.register(DeliveryPayment)
+class DeliveryPaymentAdmin(admin.ModelAdmin):
+    list_display = ["menu", "date", "debt"]
+    list_filter = ["menu", "date"]
+
+
+@admin.register(ChefPayment)
+class ChefPaymentAdmin(admin.ModelAdmin):
+    list_display = ["menu", "date", "debt"]
+    list_filter = ["menu", "date"]
 
 
 admin.site.register(Menu, MenuAdmin)
