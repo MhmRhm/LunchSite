@@ -21,9 +21,12 @@ source .venv/bin/activate
 python -m pip install Django
 python -m pip install django-crispy-forms
 python -m pip install crispy-bootstrap4
+python -m pip install python-dotenv
 
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver 0.0.0.0:8172
 ```
+You also need to put your `SECRET_KEY`, `EMAIL_HOST`, `EMAIL_HOST_USER`,
+`EMAIL_HOST_PASSWORD` from _settings.py_ in the _.env_ file.

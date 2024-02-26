@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpRequest
 from .models import Menu, Employee, MenuSelection, Meal, DeliveryPayment, ChefPayment
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 
 
 @login_required
