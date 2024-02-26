@@ -40,7 +40,7 @@
             <tr class="table-primary">
               <th scope="col">Meal</th>
               <th scope="col">Description</th>
-              <th scope="col">Vegi</th>
+              <th scope="col">Salad</th>
               <th scope="col">Price</th>
               <th scope="col">Requested</th>
               <th scope="col"></th>
@@ -57,14 +57,14 @@
                 <form action="{% url 'order_vegi' recent.menu.id item.meal.id %}" method="post">
                   {% csrf_token %}
                   {% if item.is_vegi %}
-                  <button type="submit" class="btn btn-success">Vegi</button>
+                  <button type="submit" class="btn btn-success">Salad</button>
                   {% else %}
-                  <button type="submit" class="btn btn-outline-success">Vegi</button>
+                  <button type="submit" class="btn btn-outline-success">Salad</button>
                   {% endif %}
                 </form>
                 {% else %}
                 {% if item.is_vegi %}
-                Vegi
+                Salad
                 {% endif %}
                 {% endif %}
                 {% endif %}
