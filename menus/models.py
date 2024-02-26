@@ -35,6 +35,7 @@ class Meal(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     delivery_share = models.DecimalField(max_digits=10, decimal_places=2, default=1)
+    has_vegi = models.BooleanField(default=False)
 
     def cost(self):
         return self.price + self.delivery_share
@@ -47,6 +48,7 @@ class MenuSelection(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     selected_meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    is_vegi = models.BooleanField(default=False)
     date = models.DateField(default=datetime.now)
     is_paid_for = models.BooleanField(default=False)
 

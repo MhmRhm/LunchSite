@@ -60,8 +60,12 @@
                         <div class="card-body">
                             <h4 class="card-title">{{report.count}}</h4>
                             <p class="card-text">
-                                {% for employee in report.employees %}
-                                {{employee}} <br>
+                                {% for employee, is_vegi in report.employees %}
+                                {{employee}}
+                                {% if is_vegi %}
+                                - V
+                                {% endif %}
+                                <br>
                                 {% endfor %}
                             </p>
                         </div>

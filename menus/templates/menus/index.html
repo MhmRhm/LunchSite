@@ -40,6 +40,7 @@
             <tr class="table-primary">
               <th scope="col">Meal</th>
               <th scope="col">Description</th>
+              <th scope="col">Vegi</th>
               <th scope="col">Price</th>
               <th scope="col">Requested</th>
               <th scope="col"></th>
@@ -50,6 +51,24 @@
             <tr class="table-secondary">
               <th scope="row">{{ item.meal.name }}</th>
               <td>{{ item.meal.description }}</td>
+              <td>
+                {% if item.meal.has_vegi %}
+                {% if not recent.is_expired %}
+                <form action="{% url 'order_vegi' recent.menu.id item.meal.id %}" method="post">
+                  {% csrf_token %}
+                  {% if item.is_vegi %}
+                  <button type="submit" class="btn btn-success">Vegi</button>
+                  {% else %}
+                  <button type="submit" class="btn btn-outline-success">Vegi</button>
+                  {% endif %}
+                </form>
+                {% else %}
+                {% if item.is_vegi %}
+                Vegi
+                {% endif %}
+                {% endif %}
+                {% endif %}
+              </td>
               <td>RM {{ item.meal.cost }}</td>
               <td>{{ item.count }}</td>
               <td>
@@ -72,6 +91,7 @@
             </tr>
             {% endfor %}
             <tr class="table-active">
+              <td scope="col"></td>
               <td scope="col"></td>
               <td scope="col"></td>
               <td scope="col"></td>

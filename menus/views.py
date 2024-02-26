@@ -21,14 +21,20 @@ def index(request):
         menu_items = []
 
         for meal in meals:
-            can_order = (
-                MenuSelection.objects.filter(
-                    employee=employee, menu=menu, selected_meal=meal
-                ).count()
-                == 0
+            orders = MenuSelection.objects.filter(
+                employee=employee, menu=menu, selected_meal=meal
             )
+            can_order = orders.count() == 0
+            is_vegi = orders.count() != 0 and meal.has_vegi and orders.all()[0].is_vegi
             count = MenuSelection.objects.filter(menu=menu, selected_meal=meal).count()
-            menu_items.append({"meal": meal, "count": count, "can_order": can_order})
+            menu_items.append(
+                {
+                    "meal": meal,
+                    "count": count,
+                    "can_order": can_order,
+                    "is_vegi": is_vegi,
+                }
+            )
 
         latest_menus.append(
             {
@@ -70,6 +76,25 @@ def order_meal(request, menu_id, meal_id):
 
 
 @login_required
+def order_vegi(request, menu_id, meal_id):
+    menu = Menu.objects.get(id=menu_id)
+    meal = Meal.objects.get(id=meal_id)
+    user = request.user
+    employee = Employee.objects.get(user=user)
+
+    if menu.expire_at > timezone.now():
+        if meal.has_vegi:
+            order = MenuSelection.objects.filter(
+                employee=employee, menu=menu, selected_meal=meal
+            ).last()
+            if order:
+                order.is_vegi = not order.is_vegi
+                order.save()
+
+    return index(request)
+
+
+@login_required
 def cancel_meal(request, menu_id, meal_id):
     menu = Menu.objects.get(id=menu_id)
     meal = Meal.objects.get(id=meal_id)
@@ -93,7 +118,7 @@ def report_menu(request, menu_id):
     meals_report = []
     for meal in meals:
         employees = [
-            order.employee.user.get_full_name()
+            (order.employee.user.get_full_name(), meal.has_vegi and order.is_vegi)
             for order in MenuSelection.objects.filter(menu=menu, selected_meal=meal)
         ]
         meals_report.append(
