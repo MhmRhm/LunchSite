@@ -28,8 +28,8 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @admin.register(MenuSelection)
 class MenuSelectionAdmin(admin.ModelAdmin):
-    list_display = ["employee", "menu", "selected_meal", "date"]
-    list_filter = ["employee", "menu", "date"]
+    list_display = ["employee", "menu", "selected_meal", "date", "is_paid_for"]
+    list_filter = ["menu", "selected_meal", "date", "employee"]
     search_fields = ["employee__get_full_name", "menu__name", "selected_meal__name"]
     date_hierarchy = "date"
 
@@ -71,7 +71,7 @@ class ChefPaymentAdmin(admin.ModelAdmin):
             response.context_data["debt"] = debt
         except:
             pass
-        
+
         return response
 
     list_display = ["menu", "date", "debt"]

@@ -141,7 +141,7 @@ def processMenus(request):
             orders = MenuSelection.objects.filter(menu=menu).all()
 
             for order in orders:
-                if not order.is_paid_for:
+                if not order.is_paid_for and not order.is_canceled:
                     count = MenuSelection.objects.filter(
                         menu=menu, selected_meal=order.selected_meal
                     ).count()
@@ -158,7 +158,8 @@ def processMenus(request):
                         employee.save()
                         order.save()
                     else:
-                        order.delete()
+                        order.is_canceled = True
+                        order.save()
 
             menu.is_paid_for = True
             menu.save()

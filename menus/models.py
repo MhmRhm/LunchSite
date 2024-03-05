@@ -51,6 +51,7 @@ class MenuSelection(models.Model):
     is_vegi = models.BooleanField(default=False)
     date = models.DateField(default=datetime.now)
     is_paid_for = models.BooleanField(default=False)
+    is_canceled = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ("employee", "menu", "selected_meal")
