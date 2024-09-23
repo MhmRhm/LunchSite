@@ -1,6 +1,9 @@
 # LunchSite
 A Food Ordering System for My Workplace
 
+<p align="center"><img src="https://i.postimg.cc/FscqZ90H/Screenshot-2024-09-18-124827.png" alt="Order"></img></p>
+<p align="center"><img src="https://i.postimg.cc/Hk9hqBZG/Screenshot-2024-09-18-124838.png" alt="Report"></img></p>
+
 Get it running on your server:
 ```bash
 tree -L 1
